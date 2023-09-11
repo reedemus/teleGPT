@@ -29,6 +29,12 @@ async def custom_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     """Return a string when custom command is received"""
     await update.message.reply_text('Custom cmd!')
 
+# Custom command handler
+async def clear_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Clear chat history to release embedding tokens"""
+    llm.clear_messages()
+    await update.message.reply_text('chat history cleared')
+
 
 # Error handler
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):

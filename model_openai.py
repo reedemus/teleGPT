@@ -20,6 +20,9 @@ class ChatGPT:
     def name(self) -> str:
         return self._name    
 
+    def clear_messages(self):
+        self._messages.clear()
+        self._messages.append({"role": "system", "content": "You are a helpful assistant."})
 
     def handle_response(self, prompt: str) -> str:
         """Retain user messages and append assistant's responses in a message list.
