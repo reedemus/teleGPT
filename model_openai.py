@@ -10,10 +10,7 @@ class ChatGPT:
         print("chatGPT initialized.")
         self._name = "chatGPT-3.5"
         self._model = model
-        self._messages = [
-            {"role": "system", "content": "You are a helpful assistant."},
-        ]
-
+        self._messages = [{"role": "system", "content": "You are a helpful assistant."}]
 
     # a getter function
     @property
@@ -21,6 +18,7 @@ class ChatGPT:
         return self._name    
 
     def clear_messages(self):
+        """Clear message list"""
         self._messages.clear()
         self._messages.append({"role": "system", "content": "You are a helpful assistant."})
 

@@ -25,15 +25,10 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
 
 # Custom command handler
-async def custom_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Return a string when custom command is received"""
-    await update.message.reply_text('Custom cmd!')
-
-# Custom command handler
 async def clear_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Clear chat history to release embedding tokens"""
     llm.clear_messages()
-    await update.message.reply_text('chat history cleared')
+    await update.message.reply_text('Chat history cleared.')
 
 
 # Error handler
@@ -86,7 +81,7 @@ if __name__ == '__main__':
     # Commands
     app.add_handler(CommandHandler('start', start_command))
     app.add_handler(CommandHandler('help', help_command))
-    app.add_handler(CommandHandler('custom', custom_command))
+    app.add_handler(CommandHandler('clear', clear_command))
 
     # Messages
     app.add_handler(MessageHandler(filters.TEXT, handle_message))
