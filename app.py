@@ -9,13 +9,13 @@ _ = load_dotenv(find_dotenv())
 TELE_API_KEY = os.getenv('TELEGRAM_API_TOKEN')
 BOT_NAME = '@gpt123bot' 
 
-# /start cmd handler
+# start cmd handler
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Return a string when start command is received"""
     await update.message.reply_text(f"Hi, I'm a chatbot powered by {llm.name}. Ask me anything.")
 
 
-# Command handler
+# help command handler
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Return helpful information when help command is received"""
     await update.message.reply_text(
@@ -24,7 +24,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         or email. Ask me anything.')
 
 
-# Custom command handler
+# clear command handler
 async def clear_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Clear chat history to release embedding tokens"""
     llm.clear_messages()
@@ -32,12 +32,14 @@ async def clear_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
 
 # Error handler
-async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def error(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Prints error message"""
     print(f'Update {update} causes error {context.error}')
 
 
 # Response handler
 def handle_response(msg: str) -> str:
+    """Pass user input to llm and returns the response as string"""
     return llm.handle_response(msg)
 
 
@@ -45,8 +47,12 @@ def handle_response(msg: str) -> str:
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Message handler
 
-    update: Update object containing message details such as user id, message contents, etc.
-    context: Context object
+    Args:
+        update: Update object containing message details such as user id, message contents, etc.
+        context: Context object
+
+    Returns:
+        None
 
     TODO :
     1) handle multiple users' responses - track each user's chat history from Update user id

@@ -1,4 +1,5 @@
-import openai, os
+import openai
+import os
 from dotenv import load_dotenv, find_dotenv
 
 # Get API tokens from environment file
@@ -6,7 +7,8 @@ _ = load_dotenv(find_dotenv())
 openai.api_key = os.getenv('OPENAI_API_TOKEN')
 
 class ChatGPT:
-    def __init__(self, model="gpt-3.5-turbo") -> None:
+    """chatGPT class"""
+    def __init__(self, model = "gpt-3.5-turbo") -> None:
         print("chatGPT initialized.")
         self._name = "chatGPT-3.5"
         self._model = model
@@ -15,9 +17,17 @@ class ChatGPT:
     # a getter function
     @property
     def name(self) -> str:
+        """Returns name of llm model
+    
+        Args:
+            None
+        
+        Returns:
+            string
+        """
         return self._name    
 
-    def clear_messages(self):
+    def clear_messages(self) -> None:
         """Clear message list"""
         self._messages.clear()
         self._messages.append({"role": "system", "content": "You are a helpful assistant."})
@@ -26,8 +36,11 @@ class ChatGPT:
         """Retain user messages and append assistant's responses in a message list.
         This is due to the model does not store chat history after each query is sent.
         
-        prompt: user input message
-        return: string response from model
+        Args:
+            prompt: user input message
+
+        Returns:
+            string response from model
         
         TODO:
          1) use moderation API to detect hate speech and adhere to safety guidelines
@@ -39,7 +52,7 @@ class ChatGPT:
             messages=self._messages,
             temperature=0,
         )
-        self._messages.append({"role":"assistant", "content":f"{response}"})
+        self._messages.append({"role":"assistant", "content": f"{response}"})
 
         # return assistant's response
         return response.choices[0].message["content"]
