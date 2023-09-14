@@ -97,4 +97,4 @@ if __name__ == '__main__':
 
     # polling
     print('Running...')
-    app.run_polling(poll_interval=3)
+    app.run_polling(poll_interval=1)
