@@ -1,7 +1,8 @@
 import os
+import logging
 import model_openai
 from dotenv import load_dotenv, find_dotenv
-from telegram import Update
+from telegram import Update, constants
 from telegram.ext import (
     Application,
     ContextTypes,
@@ -14,6 +15,13 @@ from telegram.ext import (
 _ = load_dotenv(find_dotenv())
 TELE_API_KEY = os.getenv("TELEGRAM_API_TOKEN")
 BOT_NAME = "@gpt123bot"
+
+logging.basicConfig(
+    filename="telegpt.log",
+    filemode="w",
+    format="%(asctime)s - %(levelname)s: %(message)s",
+    level=logging.INFO,
+)
 
 
 # start cmd handler
@@ -70,22 +78,28 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     """
     msg_type = update.message.chat.type
     msg = update.message.text  # Incoming message
+    user = update.message.from_user.id  # User id
 
-    print(f'User {update.message.chat.id} in {msg_type}: "{msg}"')
+    # print(f"Update Obj: {update}")
+    print(f'User {user} in {msg_type}: "{msg}"')
 
     # If in group chat, remove bot name from chat window
     if msg_type == "group":
         if BOT_NAME in msg:
             new_msg = msg.replace(BOT_NAME, "").strip()
-            response = handle_response(new_msg)
+            response, _ = handle_response(new_msg)
         else:
             return
     else:
         # private chat
-        response = handle_response(msg)
+        response, _ = handle_response(msg)
 
     # print response message for debug
     print(f'Bot: "{response}"')
+    # show anmation that bot is typing
+    await context.bot.sendChatAction(
+        chat_id=update.effective_chat.id, action=constants.ChatAction.TYPING
+    )
     await update.message.reply_text(response)
 
 

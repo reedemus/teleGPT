@@ -36,7 +36,7 @@ class ChatGPT:
             {"role": "system", "content": "You are a helpful assistant."}
         )
 
-    def handle_response(self, prompt: str) -> str:
+    def handle_response(self, prompt: str) -> tuple:
         """Retain user messages and append assistant's responses in a message list.
         This is due to the model does not store chat history after each query is sent.
 
@@ -44,7 +44,7 @@ class ChatGPT:
             prompt: user input message
 
         Returns:
-            string response from model
+            tuple: string response, message list
 
         TODO:
          1) use moderation API to detect hate speech and adhere to safety guidelines
@@ -56,7 +56,8 @@ class ChatGPT:
             messages=self._messages,
             temperature=0,
         )
-        self._messages.append({"role": "assistant", "content": f"{response}"})
+        resp = response.choices[0].message["content"]
+        self._messages.append({"role": "assistant", "content": f"{resp}"})
 
-        # return assistant's response
-        return response.choices[0].message["content"]
+        # return assistant's response and message list
+        return (resp, self._messages)
