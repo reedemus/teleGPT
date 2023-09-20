@@ -56,20 +56,6 @@ async def error(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     print(f"Update {update} causes error {context.error}")
 
 
-# Response handler
-def handle_response(user_id: int, msg: str) -> str:
-    """Pass user input to llm and returns the response as string
-
-    Args:
-        user_id: user's id number from Update object.
-        msg: user's prompt
-
-    Returns:
-        response string from llm
-    """
-    return llm.handle_response(user_id, msg)
-
-
 # Input message handler
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Message handler
@@ -92,12 +78,12 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     if msg_type == "group":
         if BOT_NAME in msg:
             new_msg = msg.replace(BOT_NAME, "").strip()
-            response = handle_response(user_id, new_msg)
+            response = llm.handle_response(user_id, new_msg)
         else:
             return
     else:
         # private chat
-        response = handle_response(user_id, msg)
+        response = llm.handle_response(user_id, msg)
 
     # print response message for debug
     print(f'Bot: "{response}"')

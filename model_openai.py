@@ -17,8 +17,8 @@ class ChatGPT:
 
     def __init__(self, model="gpt-3.5-turbo") -> None:
         print("chatGPT initialized.")
-        self.name = "chatGPT-3.5"
-        self.model = model
+        self._name = "chatGPT-3.5"
+        self._model = model
         self._chat_history = [
             {
                 "user": UserEnum.UNKNOWN_USER,
@@ -30,7 +30,7 @@ class ChatGPT:
 
     # a getter function
     @property
-    def name(self) -> str:
+    def name(self):
         """Returns name of llm model
 
         Args:
@@ -39,7 +39,12 @@ class ChatGPT:
         Returns:
             string
         """
-        return self.name
+        return self._name
+
+    # setter function
+    @name.setter
+    def name(self, name):
+        self._name = name
 
     def clear_messages(self, user_id: int) -> None:
         """Clear message list"""
@@ -70,7 +75,7 @@ class ChatGPT:
         conversation.append({"role": "user", "content": f"{prompt}"})
 
         response = openai.ChatCompletion.create(
-            model=self.model,
+            model=self._model,
             messages=conversation,
             temperature=0,
         )
@@ -78,7 +83,6 @@ class ChatGPT:
         conversation.append({"role": "assistant", "content": f"{resp}"})
         # update the message list
         self._update_chat_history(user_id, conversation)
-
         return resp
 
     def _update_chat_history(self, user_id: int, user_messages: list) -> None:
@@ -88,8 +92,8 @@ class ChatGPT:
             if user_id == self._chat_history[idx]["user"]:
                 found = True
                 # shallow copy
-                self._chat_history[idx]["message"].copy(user_messages)
-
+                self._chat_history[idx]["message"] = user_messages
+                break
         if not found:
             self._chat_history.append({"user": user_id, "message": user_messages})
 
@@ -100,7 +104,19 @@ class ChatGPT:
             self._chat_history[0]["user"] = user_id
             messages = self._chat_history[0]["message"]
         else:
+            found = False
             for idx, _ in enumerate(self._chat_history):
                 if user_id == self._chat_history[idx]["user"]:
                     messages = self._chat_history[idx]["message"]
+                    found = True
+                    break
+            if not found:
+                # found a new user
+                messages = [
+                    {
+                        "role": "system",
+                        "content": "You are a helpful assistant.",
+                    }
+                ]
+                self._chat_history.append({"user": user_id, "message": messages})
         return messages
