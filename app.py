@@ -45,7 +45,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 # clear command handler
 async def clear_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Clear chat history to release embedding tokens"""
-    llm.clear_messages()
+    user_id = update.message.from_user.id
+    llm.clear_messages(user_id)
     await update.message.reply_text("Chat history cleared.")
 
 
@@ -56,9 +57,17 @@ async def error(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 # Response handler
-def handle_response(msg: str) -> str:
-    """Pass user input to llm and returns the response as string"""
-    return llm.handle_response(msg)
+def handle_response(user_id: int, msg: str) -> str:
+    """Pass user input to llm and returns the response as string
+
+    Args:
+        user_id: user's id number from Update object.
+        msg: user's prompt
+
+    Returns:
+        response string from llm
+    """
+    return llm.handle_response(user_id, msg)
 
 
 # Input message handler
@@ -71,28 +80,24 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
     Returns:
         None
-
-    TODO :
-    1) handle multiple users' responses - track each user's chat history from Update user id
-    2) handle streaming response from chatGPT API (stream = true)
     """
     msg_type = update.message.chat.type
     msg = update.message.text  # Incoming message
-    user = update.message.from_user.id  # User id
+    user_id = update.message.from_user.id
 
     # print(f"Update Obj: {update}")
-    print(f'User {user} in {msg_type}: "{msg}"')
+    print(f'User {user_id} in {msg_type}: "{msg}"')
 
     # If in group chat, remove bot name from chat window
     if msg_type == "group":
         if BOT_NAME in msg:
             new_msg = msg.replace(BOT_NAME, "").strip()
-            response, _ = handle_response(new_msg)
+            response = handle_response(user_id, new_msg)
         else:
             return
     else:
         # private chat
-        response, _ = handle_response(msg)
+        response = handle_response(user_id, msg)
 
     # print response message for debug
     print(f'Bot: "{response}"')
