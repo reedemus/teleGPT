@@ -34,31 +34,14 @@ class ChatGPT:
     def name(self, name):
         self._name = name
 
-    @property
-    def message(self):
-        """Return all prompts
-
-        Args:
-            None
-
-        Returns:
-            list of dictionaries
-        """
-        return self._message
-
-    # setter function
-    @message.setter
-    def message(self, msg):
-        self._message = msg
-
-    def clear_messages(self, user_id: int) -> None:
+    def clear_messages(self) -> None:
         """Clear message list"""
         self._message.clear()
         self._message.append(
             {"role": "system", "content": "You are a helpful assistant."}
         )
 
-    def handle_response(self, prompt: str) -> list:
+    def handle_response(self, prompt: str) -> str:
         """Retain user messages and append assistant's responses in a message list.
         This is due to the model does not store chat history after each query is sent.
 
@@ -66,19 +49,19 @@ class ChatGPT:
             prompt: user input message
 
         Returns:
-            list of dict of prompts
+            response string
 
         TODO:
          1) use moderation API to detect hate speech and adhere to safety guidelines
          2) prevent prompt injection attacks
         """
         # retrieve user's message list
-        conversation = self._message.append({"role": "user", "content": f"{prompt}"})
+        # conversation = self._message.append({"role": "user", "content": f"{prompt}"})
         response = openai.ChatCompletion.create(
             model=self._model,
-            messages=conversation,
+            messages=self._message.append({"role": "user", "content": f"{prompt}"}),
             temperature=0,
         )
         resp = response.choices[0].message["content"]
-        conversation.append({"role": "assistant", "content": f"{resp}"})
-        return conversation
+        self._message.append({"role": "assistant", "content": f"{resp}"})
+        return resp
