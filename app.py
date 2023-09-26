@@ -84,9 +84,7 @@ def response_handler(user_id: int, prompt: str) -> str:
         found = False
         for idx, _ in enumerate(users_chat_history):
             if user_id == users_chat_history[idx]["user"]:
-                response = users_chat_history[idx]["instance"].handle_response(
-                    prompt
-                )
+                response = users_chat_history[idx]["instance"].handle_response(prompt)
                 found = True
                 break
         if not found:
@@ -94,12 +92,12 @@ def response_handler(user_id: int, prompt: str) -> str:
             users_chat_history.append(
                 {"user": user_id, "instance": model_openai.ChatGPT()}
             )
-    response = users_chat_history[-1]["instance"].handle_response(prompt)
+        response = users_chat_history[-1]["instance"].handle_response(prompt)
     return response
 
 
 # Input message handler
-def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Message handler
 
     Args:
@@ -130,10 +128,10 @@ def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     # print response message for debug
     print(f'Bot: "{response}"')
     # show anmation that bot is typing
-    context.bot.sendChatAction(
+    await context.bot.sendChatAction(
         chat_id=update.effective_chat.id, action=constants.ChatAction.TYPING
     )
-    update.message.reply_text(response)
+    await update.message.reply_text(response)
 
 
 if __name__ == "__main__":

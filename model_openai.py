@@ -56,12 +56,12 @@ class ChatGPT:
          2) prevent prompt injection attacks
         """
         # retrieve user's message list
-        # conversation = self._message.append({"role": "user", "content": f"{prompt}"})
-        response = openai.ChatCompletion.create(
+        self._message.append({"role": "user", "content": f"{prompt}"})
+        self._response = openai.ChatCompletion.create(
             model=self._model,
-            messages=self._message.append({"role": "user", "content": f"{prompt}"}),
+            messages=self._message,
             temperature=0,
         )
-        resp = response.choices[0].message["content"]
+        resp = self._response.choices[0].message["content"]
         self._message.append({"role": "assistant", "content": f"{resp}"})
         return resp
