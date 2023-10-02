@@ -151,4 +151,4 @@ if __name__ == "__main__":
 
     # polling
     print("Running...")
-    app.run_polling()
+    app.run_polling(poll_interval=2)
