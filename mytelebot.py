@@ -23,14 +23,21 @@ WEBHOOK_URL_PATH = "/webhook"
 # WEBHOOK_PORT = 10000
 # WEBHOOK_LISTEN = "127.0.0.1"
 
+logging.basicConfig(
+    filename="telegpt.log",
+    filemode="w",
+    format="%(asctime)s - %(levelname)s: %(message)s",
+    level=logging.INFO,
+)
 logger = telebot.logger
 telebot.logger.setLevel(logging.INFO)
 
- # set threaded=False if deploy on host provider
+# set threaded=False if deploy on host provider
 bot = telebot.TeleBot(API_TOKEN, threaded=False)
 
 
 app = Flask(__name__)
+
 
 @app.get("/healthcheck")
 def health() -> Response:
@@ -41,16 +48,16 @@ def health() -> Response:
 
 
 # Return a simple message for root path
-@app.route('/', methods=['GET', 'HEAD'])
+@app.route("/", methods=["GET", "HEAD"])
 def index():
-    return 'hello there!'
+    return "hello there!"
 
 
 # Process webhook calls
 @app.post(WEBHOOK_URL_PATH)
 def webhook() -> Response:
-    if request.headers.get('content-type') == 'application/json':
-        json_string = request.get_data().decode('utf-8')
+    if request.headers.get("content-type") == "application/json":
+        json_string = request.get_data().decode("utf-8")
         print(json_string)
         update = telebot.types.Update.de_json(json_string)
         bot.process_new_updates([update])
@@ -61,16 +68,17 @@ def webhook() -> Response:
 
 
 # Handle '/start' and '/help'
-@bot.message_handler(commands=['help', 'start'])
+@bot.message_handler(commands=["help", "start"])
 def send_welcome(message):
     # print("Command msg received")
-    bot.reply_to(message,
-                 ("Hi there, I am EchoBot.\n"
-                  "I am here to echo your kind words back to you."))
+    bot.reply_to(
+        message,
+        ("Hi there, I am EchoBot.\n" "I am here to echo your kind words back to you."),
+    )
 
 
 # Handle all other messages
-@bot.message_handler(func=lambda message: True, content_types=['text'])
+@bot.message_handler(func=lambda message: True, content_types=["text"])
 def echo_message(message):
     # print("Other type of messages received")
     bot.reply_to(message, message.text)
