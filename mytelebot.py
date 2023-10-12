@@ -91,7 +91,7 @@ def send_welcome(message: types.Message) -> None:
 
 
 # Handle "/clear"
-@bot.message_handler(commands=["/clear"])
+@bot.message_handler(commands=["clear"])
 def clear_command(message: types.Message) -> None:
     """Clear chat history to release embedding tokens"""
     user_id = message.from_user.id
