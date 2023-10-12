@@ -67,7 +67,7 @@ def webhook() -> Response:
         print(json_string)
         update = telebot.types.Update.de_json(json_string)
         bot.process_new_updates([update])
-        return Response(HTTPStatus.OK)
+        return Response(status=HTTPStatus.OK)
     else:
         logging.info("Webhook payload is invalid")
 
