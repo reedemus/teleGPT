@@ -157,15 +157,15 @@ def message_handler(message: types.Message) -> None:
         if BOT_NAME in msg:
             new_msg = msg.replace(BOT_NAME, "").strip()
             response = response_handler(user_id, new_msg)
+            print(f'Bot: "{response}"')
             bot.reply_to(message, response)
         else:
             return
     else:
         # private chat
         response = response_handler(user_id, msg)
+        print(f'Bot: "{response}"')
         bot.send_message(message.chat.id, response)
-    # print response message for debug
-    print(f'Bot: "{response}"')
 
 
 # ------------------ End of bot functions ------------------------------------------
