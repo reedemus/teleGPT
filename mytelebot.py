@@ -3,6 +3,7 @@ import time
 import os
 import telebot
 import model_openai
+from telebot import types
 from http import HTTPStatus
 from flask import Flask, Response, make_response, request
 from dotenv import load_dotenv, find_dotenv
@@ -17,7 +18,7 @@ WEBHOOK_HOST = os.getenv("PUBLIC_URL")
 WEBHOOK_URL_BASE = f"{WEBHOOK_HOST}"
 WEBHOOK_URL_PATH = "/webhook"
 
-BOT_NAME = "@gpt123bot"
+BOT_NAME = "gpt123bot"
 
 # Since HTTPS is handled by webhost provider, not required to set HTTPS port 443 or 8443
 # WEBHOOK_PORT = 10000
@@ -42,6 +43,7 @@ users_chat_history = []
 bot = telebot.TeleBot(API_TOKEN, threaded=False)
 app = Flask(__name__)
 
+
 # ------------------ Flask functions -----------------------------------------------
 @app.get("/healthcheck")
 def health() -> Response:
@@ -53,7 +55,7 @@ def health() -> Response:
 
 # Return a simple message for root path
 @app.route("/", methods=["GET", "HEAD"])
-def index():
+def index() -> str:
     return "hello there!"
 
 
@@ -69,32 +71,35 @@ def webhook() -> Response:
         return response
     else:
         logging.info("Webhook payload is invalid")
+
+
 # ------------------ End of Flask functions ----------------------------------------
+
 
 # ------------------ Bot functions -------------------------------------------------
 # Handle "/start" and "/help"
 @bot.message_handler(commands=["help", "start"])
-def send_welcome(message):
+def send_welcome(message: types.Message) -> None:
     """Return a string when start or help command is received"""
-    bot.reply_to(
-        message,
+    bot.send_message(
+        message.chat.id,
         "Hi, I'm a chatbot powered by chatGPT.\
         I can summarize paragraphs of text, translate any \
         sentence, generate contents such as poems, lyrics, \
-        or email. Ask me anything."
+        or email. Ask me anything.",
     )
 
 
 # Handle "/clear"
 @bot.message_handler(commands=["/clear"])
-def clear_command(message):
+def clear_command(message: types.Message) -> None:
     """Clear chat history to release embedding tokens"""
     user_id = message.from_user.id
     for idx, _ in enumerate(users_chat_history):
         if user_id == users_chat_history[idx]["user"]:
             users_chat_history[idx]["instance"].clear_messages()
             break
-    bot.reply_to("Chat history cleared.")
+    bot.send_message(message.chat.id, "Chat history cleared.")
 
 
 # llm response handler
@@ -130,7 +135,7 @@ def response_handler(user_id: int, prompt: str) -> str:
 
 # Handle all other messages
 @bot.message_handler(func=lambda message: True, content_types=["text"])
-def message_handler(message):
+def message_handler(message: types.Message) -> None:
     """Message handler
 
     Args:
@@ -152,15 +157,16 @@ def message_handler(message):
         if BOT_NAME in msg:
             new_msg = msg.replace(BOT_NAME, "").strip()
             response = response_handler(user_id, new_msg)
+            bot.reply_to(message, response)
         else:
             return
     else:
         # private chat
         response = response_handler(user_id, msg)
-
+        bot.send_message(message.chat.id, response)
     # print response message for debug
     print(f'Bot: "{response}"')
-    bot.reply_to(message, response)
+
 
 # ------------------ End of bot functions ------------------------------------------
 
