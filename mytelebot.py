@@ -67,8 +67,7 @@ def webhook() -> Response:
         print(json_string)
         update = telebot.types.Update.de_json(json_string)
         bot.process_new_updates([update])
-        response = make_response("Got an update from Telegram!", HTTPStatus.OK)
-        return response
+        return Response(HTTPStatus.OK)
     else:
         logging.info("Webhook payload is invalid")
 
