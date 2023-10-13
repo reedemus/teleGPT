@@ -157,7 +157,7 @@ def message_handler_private(message: types.Message) -> None:
 
 
 # Handle all messages in group chat
-@bot.message_handler(chat_types=["group"], content_types=["text"])
+@bot.message_handler(chat_types=["group", "supergroup"], content_types=["text"])
 def message_handler_group(message: types.Message) -> None:
     """Message handler
 
