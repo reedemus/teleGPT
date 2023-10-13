@@ -18,7 +18,7 @@ WEBHOOK_HOST = os.getenv("PUBLIC_URL")
 WEBHOOK_URL_BASE = f"{WEBHOOK_HOST}"
 WEBHOOK_URL_PATH = "/webhook"
 
-BOT_NAME = "gpt123bot"
+BOT_NAME = "@gpt123bot"
 
 # Since HTTPS is handled by webhost provider, not required to set HTTPS port 443 or 8443
 # WEBHOOK_PORT = 10000
@@ -132,9 +132,32 @@ def response_handler(user_id: int, prompt: str) -> str:
     return response
 
 
-# Handle all other messages
-@bot.message_handler(func=lambda message: True, content_types=["text"])
-def message_handler(message: types.Message) -> None:
+# Handle all messages in private chat
+@bot.message_handler(chat_types=["private"], content_types=["text"])
+def message_handler_private(message: types.Message) -> None:
+    """Message handler
+
+    Args:
+        update: Update object containing message details such as user id, message contents, etc.
+        context: Context object
+
+    Returns:
+        None
+    """
+    msg_type = message.chat.type
+    msg = message.text  # Incoming message
+    user_id = message.from_user.id
+
+    # print(f"Update Obj: {update}")
+    print(f'User {user_id} in {msg_type}: "{msg}"')
+    response = response_handler(user_id, msg)
+    print(f'Bot: "{response}"')
+    bot.send_message(message.chat.id, response)
+
+
+# Handle all messages in group chat
+@bot.message_handler(chat_types=["group"], content_types=["text"])
+def message_handler_group(message: types.Message) -> None:
     """Message handler
 
     Args:
@@ -152,19 +175,12 @@ def message_handler(message: types.Message) -> None:
     print(f'User {user_id} in {msg_type}: "{msg}"')
 
     # If in group chat, remove bot name from chat window
-    if msg_type == "group":
-        if BOT_NAME in msg:
-            new_msg = msg.replace(BOT_NAME, "").strip()
-            response = response_handler(user_id, new_msg)
-            print(f'Bot: "{response}"')
-            bot.reply_to(message, response)
-        else:
-            return
+    if BOT_NAME in msg:
+        new_msg = msg.replace(BOT_NAME, "").strip()
+        response = response_handler(user_id, new_msg)
+        bot.reply_to(message, response)
     else:
-        # private chat
-        response = response_handler(user_id, msg)
-        print(f'Bot: "{response}"')
-        bot.send_message(message.chat.id, response)
+        return
 
 
 # ------------------ End of bot functions ------------------------------------------
