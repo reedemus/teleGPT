@@ -16,7 +16,7 @@ API_TOKEN = os.getenv("TELEGRAM_API_TOKEN")
 # FQDN should include "https://" from environment variable stored at host provider
 WEBHOOK_HOST = os.getenv("PUBLIC_URL")
 WEBHOOK_URL_BASE = f"{WEBHOOK_HOST}"
-WEBHOOK_URL_PATH = "/webhook/"
+WEBHOOK_URL_PATH = "/webhook"
 
 BOT_NAME = "gpt123bot"
 
@@ -67,7 +67,6 @@ def webhook() -> Response:
         print(json_string)
         update = telebot.types.Update.de_json(json_string)
         bot.process_new_updates([update])
-        # return ""
         return Response(status=HTTPStatus.OK)
     else:
         logging.info("Webhook payload is invalid")
