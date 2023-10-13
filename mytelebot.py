@@ -150,6 +150,7 @@ def message_handler_private(message: types.Message) -> None:
 
     # print(f"Update Obj: {update}")
     print(f'User {user_id} in {msg_type}: "{msg}"')
+    bot.send_chat_action(message.chat.id, action="typing")
     response = response_handler(user_id, msg)
     print(f'Bot: "{response}"')
     bot.send_message(message.chat.id, response)
@@ -177,6 +178,7 @@ def message_handler_group(message: types.Message) -> None:
     # If in group chat, remove bot name from chat window
     if BOT_NAME in msg:
         new_msg = msg.replace(BOT_NAME, "").strip()
+        bot.send_chat_action(user_id, action="typing")
         response = response_handler(user_id, new_msg)
         bot.reply_to(message, response)
     else:
