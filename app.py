@@ -14,10 +14,10 @@ from telegram.ext import (
 # Get API tokens from environment file
 _ = load_dotenv(find_dotenv())
 TELE_API_KEY = os.getenv("TELEGRAM_API_TOKEN")
-BOT_NAME = "@gpt123bot"
+BOT_NAME = os.getenv("TELEGRAM_BOT_NAME")
 
 logging.basicConfig(
-    filename="telegpt.log",
+    filename=f"{BOT_NAME}.log",
     filemode="w",
     format="%(asctime)s - %(levelname)s: %(message)s",
     level=logging.INFO,
@@ -151,4 +151,4 @@ if __name__ == "__main__":
 
     # polling
     print("Running...")
-    app.run_polling(poll_interval=2)
+    app.run_polling()
