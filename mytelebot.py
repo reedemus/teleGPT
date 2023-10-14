@@ -5,20 +5,20 @@ import telebot
 import model_openai
 from telebot import types
 from http import HTTPStatus
-from flask import Flask, Response, make_response, request
+from flask import Flask, Response, make_response, request, abort
 from dotenv import load_dotenv, find_dotenv
 
 # Get API tokens from environment file
 _ = load_dotenv(find_dotenv())
 API_TOKEN = os.getenv("TELEGRAM_API_TOKEN")
+# bot name example "@mychatbot"
+BOT_NAME = os.getenv("TELEGRAM_BOT_NAME")
 
 # PUBLIC_URL = FQDN provided by host provider
 # FQDN should include "https://" from environment variable stored at host provider
-WEBHOOK_HOST = os.getenv("PUBLIC_URL")
-WEBHOOK_URL_BASE = f"{WEBHOOK_HOST}"
+WEBHOOK_URL_BASE = os.getenv("PUBLIC_URL")
 WEBHOOK_URL_PATH = "/webhook"
 
-BOT_NAME = "@gpt123bot"
 
 # Since HTTPS is handled by webhost provider, not required to set HTTPS port 443 or 8443
 # WEBHOOK_PORT = 10000
@@ -70,6 +70,7 @@ def webhook() -> Response:
         return Response(status=HTTPStatus.OK)
     else:
         logging.info("Webhook payload is invalid")
+        abort(415)  # unsupported payload type
 
 
 # ------------------ End of Flask functions ----------------------------------------
@@ -82,10 +83,10 @@ def send_welcome(message: types.Message) -> None:
     """Return a string when start or help command is received"""
     bot.send_message(
         message.chat.id,
-        "Hi, I'm a chatbot powered by chatGPT.\
-        I can summarize paragraphs of text, translate any \
-        sentence, generate contents such as poems, lyrics, \
-        or email. Ask me anything.",
+        (
+            "Hi, I'm a chatbot powered by chatGPT. I can summarize paragraphs of text, translate any \
+         sentence, generate contents such as poems, lyrics, or email. Ask me anything."
+        ),
     )
 
 
@@ -149,10 +150,10 @@ def message_handler_private(message: types.Message) -> None:
     user_id = message.from_user.id
 
     # print(f"Update Obj: {update}")
-    print(f'User {user_id} in {msg_type}: "{msg}"')
+    # print(f'User {user_id} in {msg_type}: "{msg}"')
     bot.send_chat_action(message.chat.id, action="typing")
     response = response_handler(user_id, msg)
-    print(f'Bot: "{response}"')
+    # print(f'Bot: "{response}"')
     bot.send_message(message.chat.id, response)
 
 
@@ -173,12 +174,12 @@ def message_handler_group(message: types.Message) -> None:
     user_id = message.from_user.id
 
     # print(f"Update Obj: {update}")
-    print(f'User {user_id} in {msg_type}: "{msg}"')
-
+    # print(f'User {user_id} in {msg_type}: "{msg}"')
+    logging.info(f"User {user_id} in {msg_type}: {msg}")
     # If in group chat, remove bot name from chat window
     if BOT_NAME in msg:
         new_msg = msg.replace(BOT_NAME, "").strip()
-        bot.send_chat_action(user_id, action="typing")
+        bot.send_chat_action(message.chat.id, action="typing")
         response = response_handler(user_id, new_msg)
         bot.reply_to(message, response)
     else:
