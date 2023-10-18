@@ -78,7 +78,7 @@ def webhook() -> Response:
 
 # ------------------ Bot functions -------------------------------------------------
 # Handle "/start" and "/help"
-@bot.message_handler(commands=["start, help"])
+@bot.message_handler(commands=["start", "help"])
 def send_welcome(message: types.Message) -> None:
     """Return a string when start or help command is received"""
     bot.send_message(
