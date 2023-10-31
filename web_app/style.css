@@ -1,0 +1,152 @@
+*, *:before, *:after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    background: #1D1F20;
+    color: cadetblue;
+}
+
+.wrapper {
+    max-width: 800px;
+    margin: 30px auto;
+}
+
+.photo_submit-container {
+    display: flex;
+    max-width: 800px;
+    margin: 0 auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0;
+}
+
+.photo_submit {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 300px;
+    height: 150px;
+    background: #f8f8f8;
+    border-radius: 8px;
+
+    &:hover {
+        cursor: pointer;
+        background: darken(#f8f8f8, 5%);
+    }
+
+    &:nth-child(2),
+    &:nth-child(4){
+        margin-left: 1rem;
+    }
+
+    &:nth-child(3),
+    &:nth-child(4){
+        margin-top: 1rem;
+    }
+
+    &&--image {
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+
+        &:hover {
+            cursor: default;
+        }
+    }
+}
+
+.photo_submit-input {
+    display: none;
+}
+
+.photo_submit-plus {
+    position: relative;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: cadetblue;
+    pointer-events: none;
+
+    &:after {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-46%, -52%);
+        content: '+';
+        font-size: 36px;
+        color: #fff;
+    }
+
+    .photo_submit--image & {
+        display: none;
+    }
+}
+
+.photo_submit-uploadLabel {
+    margin-top: 1rem;
+    font-size: 21px;
+    color: cadetblue;
+    letter-spacing: 0.03em;
+    pointer-events: none;
+
+    .photo_submit--image & {
+        display: none;
+    }
+}
+
+.photo_submit-delete {
+    display: none;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+
+    width: 24px;
+    height: 24px;
+
+    background: #f8f8f8;
+
+    border-radius: 50%;
+
+    text-indent: -9999px;
+    cursor: pointer;
+
+    &:before,
+    &:after {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 2px;
+        height: 12px;
+
+        background-color: cadetblue;
+
+        content: '';
+    }
+
+    &:before {
+        transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    &:after {
+        transform: translate(-50%, -50%) rotate(-45deg);
+    }
+
+    &:hover {
+        background: #ccc;
+    }
+
+    .photo_submit--image & {
+        display: inline-block;
+    }
+}

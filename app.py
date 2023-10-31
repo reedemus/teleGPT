@@ -16,6 +16,7 @@ from telegram.ext import (
 _ = load_dotenv(find_dotenv())
 TELE_API_KEY = os.getenv("TELEGRAM_API_TOKEN")
 BOT_NAME = os.getenv("TELEGRAM_BOT_NAME")
+WEB_APP_URL="https://reedemus.github.io/web_app/index.html"
 
 logging.basicConfig(
     filename=f"{BOT_NAME}.log",
@@ -69,25 +70,28 @@ async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def swap_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Sends a message with three inline buttons attached."""
     keyboard = [
-        [
-            InlineKeyboardButton("Option 1", callback_data="1"),
-            InlineKeyboardButton("Option 2", callback_data="2"),
-        ],
-        [InlineKeyboardButton("Option 3", callback_data="3")],
+        [InlineKeyboardButton("Upload Photos", web_app=WEB_APP_URL)],
     ]
-
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text("Please choose:", reply_markup=reply_markup)
 
 
-async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Parses the CallbackQuery and updates the message text."""
-    query = update.callback_query
+# async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+#     """Parses the CallbackQuery and updates the message text."""
+#     query = update.callback_query
 
-    # CallbackQueries need to be answered, even if no notification to the user is needed
-    # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
-    await query.answer()
-    await query.edit_message_text(text=f"Selected option: {query.data}")
+#     # CallbackQueries need to be answered, even if no notification to the user is needed
+#     # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
+#     await query.answer()
+#     await query.edit_message_text(text=f"Selected option: {query.data}")
+#     await update.getPhoto
+
+
+async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    file = await update.message.photo[-1].get_file()
+    await file.download_to_drive('output.jpg')
+    print(file.file_path)
+
+
 
 # llm response handler
 def response_handler(user_id: int, prompt: str) -> str:
@@ -168,6 +172,7 @@ if __name__ == "__main__":
     app.add_handler(CommandHandler("clear", clear_command))
     app.add_handler(CommandHandler("swap", swap_command))
     app.add_handler(CallbackQueryHandler(button))
+    app.add_handler(MessageHandler(filters.PHOTO, photo_handler))
 
     # Messages
     app.add_handler(MessageHandler(filters.TEXT, handle_message))
