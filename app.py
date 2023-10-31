@@ -16,7 +16,7 @@ from telegram.ext import (
 _ = load_dotenv(find_dotenv())
 TELE_API_KEY = os.getenv("TELEGRAM_API_TOKEN")
 BOT_NAME = os.getenv("TELEGRAM_BOT_NAME")
-WEB_APP_URL="https://reedemus.github.io/web_app/index.html"
+WEB_APP_URL="https://reedemus.github.io/teleGPT/web_app/index.html"
 
 logging.basicConfig(
     filename=f"{BOT_NAME}.log",
