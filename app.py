@@ -2,13 +2,12 @@ import os
 import logging
 import model_openai
 from dotenv import load_dotenv, find_dotenv
-from telegram import Update, constants, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, constants, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
 from telegram.ext import (
     Application,
     ContextTypes,
     MessageHandler,
     CommandHandler,
-    CallbackQueryHandler,
     filters,
 )
 
@@ -68,29 +67,18 @@ async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def swap_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Sends a message with three inline buttons attached."""
+    """launch a photo upload picker"""
     keyboard = [
-        [InlineKeyboardButton("Upload Photos", web_app=WEB_APP_URL)],
+        [InlineKeyboardButton("Upload Photos", web_app=WebAppInfo(WEB_APP_URL))],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-
-
-# async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-#     """Parses the CallbackQuery and updates the message text."""
-#     query = update.callback_query
-
-#     # CallbackQueries need to be answered, even if no notification to the user is needed
-#     # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
-#     await query.answer()
-#     await query.edit_message_text(text=f"Selected option: {query.data}")
-#     await update.getPhoto
+    await update.message.reply_text("Upload your portrait photo and the desired photo to have the face swapped below:", reply_markup=reply_markup)
 
 
 async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     file = await update.message.photo[-1].get_file()
     await file.download_to_drive('output.jpg')
     print(file.file_path)
-
 
 
 # llm response handler
@@ -171,7 +159,6 @@ if __name__ == "__main__":
     app.add_handler(CommandHandler("help", help_command))
     app.add_handler(CommandHandler("clear", clear_command))
     app.add_handler(CommandHandler("swap", swap_command))
-    app.add_handler(CallbackQueryHandler(button))
     app.add_handler(MessageHandler(filters.PHOTO, photo_handler))
 
     # Messages
