@@ -12,7 +12,7 @@ function loadSourceImagePreview(inputId) {
         }
         reader.readAsDataURL(input.files[0]);
         fileList["source"] = input.files[0];
-        console.log();(fileList["source"]);
+        console.log(fileList["source"]);
     }
 }
 
