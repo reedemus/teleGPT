@@ -2,34 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>TelegramWebApp</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link rel="stylesheet" href="/web_app/style.css">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="/web_app/photo_selection.js"></script>
+    <title>Photo Upload</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="/web_app/photo_selection.js"></script>
 </head>
 <body>
-    <div class="wrapper">
-        <div class="photo_submit-container">
-            <div class="photo_submit-container">
-                <label class="photo_submit js-photo_submit1">
-                    <input class="photo_submit-input js-photo_submit-input" type="file" accept="image/*">
-                    <span class="photo_submit-plus"></span>
-                    <span class="photo_submit-uploadLabel">Your photo</span>
-                    <span class="photo_submit-delete"></span>
-                </label>
-                <label class="photo_submit js-photo_submit2">
-                    <input class="photo_submit-input js-photo_submit-input" type="file" accept="image/*">
-                    <span class="photo_submit-plus"></span>
-                    <span class="photo_submit-uploadLabel">Target photo</span>
-                    <span class="photo_submit-delete"></span>
-                </label>
+    <div class="container">
+        <h2>Upload Your Photos</h2>
+        <form action="/submit_photos" method="post" enctype="multipart/form-data" class="photo-upload-form">
+            <div class="photo-upload-container">
+                <div class="photo-upload-box">
+                    <label for="photo1">Click to upload Photo 1</label>
+                    <input type="file" id="photo1" name="photo1" accept="image/*" onchange="loadImagePreview('photo1')">
+                    <img id="preview1" class="image-preview">
+                </div>
+                <div class="photo-upload-box">
+                    <label for="photo2">Click to upload Photo 2</label>
+                    <input type="file" id="photo2" name="photo2" accept="image/*" onchange="loadImagePreview('photo2')">
+                    <img id="preview2" class="image-preview">
+                </div>
             </div>
-        </div>
+            <div class="submit-button-container">
+                <input type="submit" value="Submit" class="submit-button">
+            </div>
+        </form>
     </div>
 </body>
 </html>
-
-
