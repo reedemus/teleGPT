@@ -12,7 +12,7 @@ function loadImagePreview(inputId) {
         }
         reader.readAsDataURL(input.files[0]);
         
-        if (inputId == 'source') {
+        if (inputId == 'photo1') {
             fileList["source"] = URL.createObjectURL(input.files[0]);
         }
         else {
