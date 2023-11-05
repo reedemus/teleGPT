@@ -16,13 +16,13 @@
         <form action="/submit_photos" method="post" enctype="multipart/form-data" class="photo-upload-form">
             <div class="photo-upload-container">
                 <div class="photo-upload-box">
-                    <label for="photo1">Upload your photo</label>
-                    <input type="file" id="photo1" name="photo1" accept="image/*" onchange="loadSourceImagePreview('photo1')">
+                    <label for="source">Upload your photo</label>
+                    <input type="file" id="source" name="source" accept="image/*" onchange="loadImagePreview('source')">
                     <img id="preview1" src="portrait-icon.jpg" alt="your photo" class="image-preview">
                 </div>
                 <div class="photo-upload-box">
-                    <label for="photo2">Upload target photo</label>
-                    <input type="file" id="photo2" name="photo2" accept="image/*" onchange="loadTargetImagePreview('photo2')">
+                    <label for="target">Upload target photo</label>
+                    <input type="file" id="target" name="target" accept="image/*" onchange="loadImagePreview('target')">
                     <img id="preview2" src="portrait-icon.jpg" alt="target photo" class="image-preview">
                 </div>
             </div>
