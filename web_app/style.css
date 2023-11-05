@@ -70,3 +70,16 @@ body {
     object-fit: cover;
     border-radius: 5px;
 }
+
+/* Media Query for Mobile Devices */
+@media (max-width: 512px) {
+    .container {
+        width: 100%;
+    }
+    .photo-upload-container {
+        flex-direction: column;
+    }
+    .photo-upload-box {
+        margin-right: 0;
+    }
+}
