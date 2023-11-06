@@ -14,6 +14,7 @@ A minimal [Telegram bot](https://core.telegram.org/bots/api) that integrates wit
 ## Features
 - [x] run locally using `main` branch, or
 - [x] deploy to any online server as a Flask app using `telebot2` branch
+- [ ] generate images using text prompt (coming soon!)
 
 
 ## Prerequisites
