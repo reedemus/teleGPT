@@ -31,6 +31,7 @@ Customize the configuration by copying `.env.example` and renaming it to `.env`,
 | `OPENAI_API_TOKEN`          | Your OpenAI API key from [here](https://platform.openai.com/account/api-keys)                                                                                |
 | `TELEGRAM_API_TOKEN`        | Your Telegram bot's token, obtained using [BotFather](http://t.me/botfather) (see [tutorial](https://core.telegram.org/bots/tutorial#obtain-your-bot-token)) |
 | `TELEGRAM_BOT_NAME`         | Your Telegram bot's name                                                                                                                                     |
+| `PUBLIC_URL`                | Web service provider's URL for your app e.g. https://www.yourapp-heroku.com                                                                                  |
 
 ### Installing
 Clone the repository and navigate to the project directory:
