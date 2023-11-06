@@ -8,12 +8,12 @@ A minimal [Telegram bot](https://core.telegram.org/bots/api) that integrates wit
 ## Screenshots
 
 ### Demo
-![demo](https://user-images.githubusercontent.com/11541888/225114786-0d639854-b3e1-4214-b49a-e51ce8c40387.png)
+![demo](/demo/telegpt.png)
 
 
 ## Features
 - [x] run locally using `main` branch, or
-- [x] deploy to web hosts using `telebot2` branch
+- [x] deploy to any online server using `telebot2` branch
 
 
 ## Prerequisites
@@ -54,16 +54,43 @@ source venv/bin/activate
 # For Windows:
 venv\Scripts\activate
 ```
+To deploy bot online, skip to [Deploy to web hosts](#deploy-to-web-host) section.
 
+
+#### Run locally on your PC
 3. Install the dependencies using `requirements.txt` file:
 ```shell
 pip install -r requirements.txt
 ```
 
-4. Use the following command to start the bot:
+4. Checkout `main` branch
+```
+git checkout main
+```
+
+5. Use the following command to start the bot:
 ```
 python app.py
 ```
+
+
+#### Deploy to web hosts
+3. Install the dependencies using `requirements.txt` file:
+```shell
+pip install -r requirements.txt
+```
+
+4. Checkout `main` branch
+```
+git checkout telebot2
+```
+
+5. Use the following command to start the bot:
+```
+gunicorn wsgi:app
+```
+
+
 ## Credits
 - [ChatGPT](https://chat.openai.com/chat) from [OpenAI](https://openai.com)
 - [python-telegram-bot](https://python-telegram-bot.org)
