@@ -2,7 +2,7 @@ import os
 import logging
 import model_openai
 from dotenv import load_dotenv, find_dotenv
-from telegram import Update, constants, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
+from telegram import Update, constants
 from telegram.ext import (
     Application,
     ContextTypes,
@@ -63,21 +63,6 @@ async def clear_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Prints error message"""
     print(f"Update {update} causes error {context.error}")
-
-
-async def swap_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """launch a photo upload picker"""
-    keyboard = [
-        [InlineKeyboardButton("Upload Photos", web_app=WebAppInfo(WEB_APP_URL))],
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text("Upload your portrait photo and the desired photo to have the face swapped below:", reply_markup=reply_markup)
-
-
-async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    file = await update.message.photo[-1].get_file()
-    await file.download_to_drive('output.jpg')
-    print(file.file_path)
 
 
 # llm response handler
@@ -157,8 +142,6 @@ if __name__ == "__main__":
     app.add_handler(CommandHandler("start", start_command))
     app.add_handler(CommandHandler("help", help_command))
     app.add_handler(CommandHandler("clear", clear_command))
-    app.add_handler(CommandHandler("swap", swap_command))
-    app.add_handler(MessageHandler(filters.PHOTO, photo_handler))
 
     # Messages
     app.add_handler(MessageHandler(filters.TEXT, handle_message))
