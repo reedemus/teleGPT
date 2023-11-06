@@ -1,6 +1,6 @@
 # TeleGPT
 ![python-version](https://img.shields.io/badge/python-3.9-blue.svg)
-[![openai-version](https://img.shields.io/badge/openai-0.27.8-orange.svg)](https://openai.com/)
+[![openai-version](https://img.shields.io/badge/openai-0.28.0-orange.svg)](https://openai.com/)
 [![license](https://img.shields.io/badge/License-GPL%202.0-brightgreen.svg)](LICENSE)
 
 A minimal [Telegram bot](https://core.telegram.org/bots/api) that integrates with OpenAI's [ChatGPT](https://openai.com/blog/chatgpt/) with minimal configuration required.
