@@ -8,7 +8,7 @@ A minimal [Telegram bot](https://core.telegram.org/bots/api) that integrates wit
 ## Screenshots
 
 ### Demo
-![demo](/demo/telegpt.png)
+![demo](https://github.com/reedemus/teleGPT/blob/main/demo/telegpt.png)
 
 
 ## Features
@@ -96,7 +96,7 @@ gunicorn wsgi:app
 
 ## Credits
 - [ChatGPT](https://chat.openai.com/chat) from [OpenAI](https://openai.com)
-- [python-telegram-bot](https://python-telegram-bot.org)
+- [pyTelegramBotAPI](https://pytba.readthedocs.io/en/latest/quick_start.html)
 
 
 ## Disclaimer
