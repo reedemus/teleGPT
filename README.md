@@ -56,7 +56,7 @@ source venv/bin/activate
 # For Windows:
 venv\Scripts\activate
 ```
-To deploy bot online, skip to [Deploy to web hosts](#deploy-to-web-host) section.
+To deploy bot online, skip to [Deploy to web host](#deploy-to-web-host) section.
 
 
 #### Run locally on your PC
@@ -82,12 +82,13 @@ python app.py
 pip install -r requirements.txt
 ```
 
-4. Checkout `main` branch
+4. Checkout `telebot2` branch
 ```
 git checkout telebot2
 ```
 
-5. Use the following command to start the bot:
+5. Use the following command to start the bot
+The bot is deployed as a Flask app with gunicorn wsgi server with the command below:
 ```
 gunicorn wsgi:app
 ```
