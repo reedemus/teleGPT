@@ -3,7 +3,7 @@
 [![openai-version](https://img.shields.io/badge/openai-0.28.0-orange.svg)](https://openai.com/)
 [![license](https://img.shields.io/badge/License-GPL%202.0-brightgreen.svg)](LICENSE)
 
-A minimal [Telegram bot](https://core.telegram.org/bots/api) that integrates with OpenAI's [ChatGPT](https://openai.com/blog/chatgpt/) with minimal configuration required.
+A simple [Telegram bot](https://core.telegram.org/bots/api) example that integrates with OpenAI's [ChatGPT](https://openai.com/blog/chatgpt/) with minimal configuration required.
 
 ## Screenshots
 
@@ -61,7 +61,7 @@ To deploy bot online, skip to [Deploy to web host](#deploy-to-web-host) section.
 
 #### Run locally on your PC
 3. Install the dependencies using `requirements.txt` file:
-```shell
+```
 pip install -r requirements.txt
 ```
 
