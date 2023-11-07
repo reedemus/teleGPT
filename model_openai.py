@@ -12,13 +12,12 @@ class ChatGPT:
 
     def __init__(self, model="gpt-3.5-turbo") -> None:
         print("chatGPT initialized.")
-        self._name = "chatGPT-3.5"
         self._model = model
         self._message = [{"role": "system", "content": "You are a helpful assistant."}]
 
     # a getter function
     @property
-    def name(self):
+    def model(self):
         """Returns name of llm model
 
         Args:
@@ -27,12 +26,12 @@ class ChatGPT:
         Returns:
             string
         """
-        return self._name
+        return self._model
 
     # setter function
-    @name.setter
-    def name(self, name):
-        self._name = name
+    @model.setter
+    def model(self, model):
+        self._model = model
 
     def clear_messages(self) -> None:
         """Clear message list"""
