@@ -14,7 +14,7 @@ A simple [Telegram bot](https://core.telegram.org/bots/api) example that integra
 ## Features
 - [x] run locally using `main` branch, or
 - [x] deploy to any online server as a Flask app using `telebot2` branch
-- [ ] generate images using text prompt (coming soon!)
+- [x] added [GPT-4-Turbo and GPT-4-Vision](https://openai.com/blog/new-models-and-developer-products-announced-at-devday) models!
 
 
 ## Prerequisites

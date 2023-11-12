@@ -1,10 +1,9 @@
-import openai
+from openai import OpenAI
 import os
 from dotenv import load_dotenv, find_dotenv
 
 # Get API tokens from environment file
 _ = load_dotenv(find_dotenv())
-openai.api_key = os.getenv("OPENAI_API_TOKEN")
 
 
 class ChatGPT:
@@ -12,13 +11,13 @@ class ChatGPT:
 
     def __init__(self, model="gpt-3.5-turbo") -> None:
         print("chatGPT initialized.")
-        self._name = "chatGPT-3.5"
+        self._client = OpenAI(api_key=os.getenv("OPENAI_API_TOKEN"))
         self._model = model
         self._message = [{"role": "system", "content": "You are a helpful assistant."}]
 
     # a getter function
     @property
-    def name(self):
+    def model(self):
         """Returns name of llm model
 
         Args:
@@ -27,12 +26,12 @@ class ChatGPT:
         Returns:
             string
         """
-        return self._name
+        return self._model
 
     # setter function
-    @name.setter
-    def name(self, name):
-        self._name = name
+    @model.setter
+    def model(self, model):
+        self._model = model
 
     def clear_messages(self) -> None:
         """Clear message list"""
@@ -52,16 +51,51 @@ class ChatGPT:
             response string
 
         TODO:
-         1) use moderation API to detect hate speech and adhere to safety guidelines
-         2) prevent prompt injection attacks
+        - prevent prompt injection attacks
         """
         # retrieve user's message list
         self._message.append({"role": "user", "content": f"{prompt}"})
-        self._response = openai.ChatCompletion.create(
+        self._response = self._client.chat.completions.create(
             model=self._model,
             messages=self._message,
             temperature=0,
         )
-        resp = self._response.choices[0].message["content"]
+        # resp = self._response.choices[0].message["content"]
+        resp = self._response.choices[0].message.content
+        self._message.append({"role": "assistant", "content": f"{resp}"})
+        return resp
+
+    def handle_response_with_image(self, prompt: str, image_url: str) -> str:
+        """Retain user messages and append assistant's responses in a message list.
+        This is due to the model does not store chat history after each query is sent.
+
+        Args:
+            prompt: user input message
+            image: base64-encoded image
+
+        Returns:
+            response string
+
+        TODO:
+        - prevent prompt injection attacks
+        """
+        # retrieve user's message list
+        content = [
+            {
+                "type": "text",
+                "text": str(prompt)
+            },
+            {
+                "type": "image_url",
+                "image_url": str(image_url)
+            }
+        ]
+        self._message.append({"role": "user", "content": content})
+        self._response = self._client.chat.completions.create(
+            model=self._model,
+            messages=self._message,
+            temperature=0,
+        )
+        resp = self._response.choices[0].message.content
         self._message.append({"role": "assistant", "content": f"{resp}"})
         return resp
