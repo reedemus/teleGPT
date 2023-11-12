@@ -1,10 +1,9 @@
-import openai
+from openai import OpenAI
 import os
 from dotenv import load_dotenv, find_dotenv
 
 # Get API tokens from environment file
 _ = load_dotenv(find_dotenv())
-openai.api_key = os.getenv("OPENAI_API_TOKEN")
 
 
 class ChatGPT:
@@ -12,6 +11,7 @@ class ChatGPT:
 
     def __init__(self, model="gpt-3.5-turbo") -> None:
         print("chatGPT initialized.")
+        self._client = OpenAI(api_key=os.getenv("OPENAI_API_TOKEN"))
         self._model = model
         self._message = [{"role": "system", "content": "You are a helpful assistant."}]
 
@@ -55,12 +55,13 @@ class ChatGPT:
         """
         # retrieve user's message list
         self._message.append({"role": "user", "content": f"{prompt}"})
-        self._response = openai.ChatCompletion.create(
+        self._response = self._client.chat.completions.create(
             model=self._model,
             messages=self._message,
             temperature=0,
         )
-        resp = self._response.choices[0].message["content"]
+        # resp = self._response.choices[0].message["content"]
+        resp = self._response.choices[0].message.content
         self._message.append({"role": "assistant", "content": f"{resp}"})
         return resp
 
@@ -90,11 +91,11 @@ class ChatGPT:
             }
         ]
         self._message.append({"role": "user", "content": content})
-        self._response = openai.ChatCompletion.create(
+        self._response = self._client.chat.completions.create(
             model=self._model,
             messages=self._message,
             temperature=0,
         )
-        resp = self._response.choices[0].message["content"]
+        resp = self._response.choices[0].message.content
         self._message.append({"role": "assistant", "content": f"{resp}"})
         return resp
