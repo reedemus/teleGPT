@@ -26,7 +26,7 @@ logging.basicConfig(
 
 # List of dictionaries of format:
 # [
-#  { "user": user_id, "instance": class instance, "model": selected model },
+#  { "user": user_id, "instance": class instance, "model": selected model},
 # ]
 users_chat_history = []
 
@@ -130,15 +130,58 @@ def save_model_name(user_id: int, model_name: str) -> None:
 async def get_choice_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Returns a reply about the model selected by the user"""
     user_id = update.message.from_user.id
-    for idx, _ in enumerate(users_chat_history):
-        if user_id == users_chat_history[idx]["user"]:
-            model_choice = users_chat_history[idx]["instance"].model
-            await update.message.reply_text(f"Your model selection is {model_choice}.")
-            break
-        else:
-            await update.message.reply_text(f"You have not selected any model.")
+    if len(users_chat_history) != 0:
+        for idx, _ in enumerate(users_chat_history):
+            if user_id == users_chat_history[idx]["user"]:
+                model_choice = users_chat_history[idx]["instance"].model
+                await update.message.reply_text(f"Your model selection is {model_choice}.")
+                break
+            else:
+                await update.message.reply_text(f"You have not selected any model.")
 
-    
+
+def isNewUser(user_id: int):
+    """Insert new user to user_chat_history list if not found.
+
+    Args:
+        status: bool = True if new user is found, False otherwise
+        index: int = user's index position in the list
+
+    Returns:
+        (status, index)
+    """
+    retVal: bool = False
+    index: int = 0
+
+    # Initialize message list for chatGPT model
+    if len(users_chat_history) == 0:
+        users_chat_history.append(
+            {
+                "user": user_id,
+                "instance": model_openai.ChatGPT(),
+                "model": "none",
+            }
+        )
+        retVal = True
+    else:
+        for idx, _ in enumerate(users_chat_history):
+            if user_id == users_chat_history[idx]["user"]:
+                index = idx
+                break
+            else:
+                # found a new user
+                users_chat_history.append(
+                    {
+                        "user": user_id,
+                        "instance": model_openai.ChatGPT(),
+                        "model": "none",
+                    }
+                )
+                index = idx + 1
+                retVal = True
+    return (retVal, index)
+
+
 # llm response handler
 def response_handler(user_id: int, prompt: str) -> str:
     """Response handler
@@ -151,32 +194,11 @@ def response_handler(user_id: int, prompt: str) -> str:
         response string from llm
     """
     # Initialize message list for chatGPT model
-    if len(users_chat_history) == 0:
-        users_chat_history.append(
-            {
-                "user": user_id,
-                "instance": model_openai.ChatGPT(model["GPT-3.5"]),
-                "model": model["GPT-3.5"],
-            }
-        )
-        response = users_chat_history[0]["instance"].handle_response(prompt)
+    is_new_user, idx = isNewUser(user_id)
+    if is_new_user == True or users_chat_history[idx]["model"] == "none":
+        response = "model not selected"
     else:
-        found = False
-        for idx, _ in enumerate(users_chat_history):
-            if user_id == users_chat_history[idx]["user"]:
-                response = users_chat_history[idx]["instance"].handle_response(prompt)
-                found = True
-                break
-        if not found:
-            # found a new user
-            users_chat_history.append(
-                {
-                    "user": user_id,
-                    "instance": model_openai.ChatGPT(model["GPT-3.5"]),
-                    "model": model["GPT-3.5"],
-                }
-            )
-        response = users_chat_history[-1]["instance"].handle_response(prompt)
+        response = users_chat_history[idx]["instance"].handle_response(prompt)
     return response
 
 
@@ -215,7 +237,57 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     await context.bot.sendChatAction(
         chat_id=update.effective_chat.id, action=constants.ChatAction.TYPING
     )
-    await update.message.reply_text(response)
+    if response == "model not selected":
+        await update.message.reply_text("Please choose a model before we begin.")
+        await choice_command(update, context)
+    else:
+        await update.message.reply_text(response)
+
+
+async def handle_message_with_photo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle receiving photo attachment with text caption
+
+    Args:
+        update: Update object containing message details such as user id, message contents, etc.
+        context: Context object
+
+    Returns:
+        None
+    """
+    user_id = update.message.from_user.id
+
+    # choose 2nd largest photo size (600 x 800) to reduce cost
+    photo_id = update.message.photo[-2].file_id
+
+    # get photo URL file path
+    file = await context.bot.get_file(photo_id)
+    image_url = file.file_path
+    # print(image_url)
+
+    if update.message.caption == None:
+        # default prompt
+        prompt = "describe the contents of this photo."
+    else:
+        prompt = update.message.caption
+
+    # check if user_id of this message is a new user
+    is_new_user, idx = isNewUser(user_id)
+
+    if is_new_user == True or users_chat_history[idx]["model"] == "none":
+        await update.message.reply_text("Please choose a model before we begin.")
+        await choice_command(update, context)
+    else:
+        if users_chat_history[idx]["model"] != model["GPT-4V"]:
+            await update.message.reply_text("switching to GPT-4V model...")
+            users_chat_history[idx]["model"] = model["GPT-4V"]
+            users_chat_history[idx]["instance"].model = model["GPT-4V"]
+
+        response = users_chat_history[0]["instance"].handle_response_with_image(
+            prompt, image_url)
+        # await context.bot.sendChatAction(
+        #     chat_id=update.effective_chat.id, action=constants.ChatAction.TYPING
+        # )
+        await update.message.reply_text(response)
 
 
 if __name__ == "__main__":
@@ -232,6 +304,7 @@ if __name__ == "__main__":
 
     # Messages
     app.add_handler(MessageHandler(filters.TEXT, handle_message))
+    app.add_handler(MessageHandler(filters.PHOTO, handle_message_with_photo))
 
     # Errors
     app.add_error_handler(error)

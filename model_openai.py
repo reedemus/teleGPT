@@ -51,11 +51,45 @@ class ChatGPT:
             response string
 
         TODO:
-         1) use moderation API to detect hate speech and adhere to safety guidelines
-         2) prevent prompt injection attacks
+        - prevent prompt injection attacks
         """
         # retrieve user's message list
         self._message.append({"role": "user", "content": f"{prompt}"})
+        self._response = openai.ChatCompletion.create(
+            model=self._model,
+            messages=self._message,
+            temperature=0,
+        )
+        resp = self._response.choices[0].message["content"]
+        self._message.append({"role": "assistant", "content": f"{resp}"})
+        return resp
+
+    def handle_response_with_image(self, prompt: str, image_url: str) -> str:
+        """Retain user messages and append assistant's responses in a message list.
+        This is due to the model does not store chat history after each query is sent.
+
+        Args:
+            prompt: user input message
+            image: base64-encoded image
+
+        Returns:
+            response string
+
+        TODO:
+        - prevent prompt injection attacks
+        """
+        # retrieve user's message list
+        content = [
+            {
+                "type": "text",
+                "text": str(prompt)
+            },
+            {
+                "type": "image_url",
+                "image_url": str(image_url)
+            }
+        ]
+        self._message.append({"role": "user", "content": content})
         self._response = openai.ChatCompletion.create(
             model=self._model,
             messages=self._message,
