@@ -95,6 +95,7 @@ class ChatGPT:
             model=self._model,
             messages=self._message,
             temperature=0,
+            max_tokens=400
         )
         resp = self._response.choices[0].message.content
         self._message.append({"role": "assistant", "content": f"{resp}"})
