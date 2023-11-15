@@ -9,6 +9,7 @@ A simple [Telegram bot](https://core.telegram.org/bots/api) example that integra
 
 ### Demo
 ![demo](/demo/telegpt.png)
+![GPT-4 Vision demo](/demo/gpt4v-ss.png)
 
 
 ## Features
