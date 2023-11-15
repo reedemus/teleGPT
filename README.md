@@ -1,7 +1,7 @@
 # TeleGPT
 ![python-version](https://img.shields.io/badge/python-3.9-blue.svg)
-[![openai-version](https://img.shields.io/badge/openai-0.28.0-orange.svg)](https://openai.com/)
-[![license](https://img.shields.io/badge/License-GPL%202.0-brightgreen.svg)](LICENSE)
+[![openai-version](https://img.shields.io/badge/openai-1.2.3-orange.svg)](https://openai.com/)
+[![license: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 
 A simple [Telegram bot](https://core.telegram.org/bots/api) example that integrates with OpenAI's [ChatGPT](https://openai.com/blog/chatgpt/) with minimal configuration required.
 
